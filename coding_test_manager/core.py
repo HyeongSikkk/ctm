@@ -3,15 +3,29 @@ from bs4 import BeautifulSoup as BS
 
 def manager(url) :
     if 'programmers' in url :
-        print('programmers')
+        return Programmers(url)
     elif 'acmicpc' in url :
-        print('백준')
+        return Acmicpc(url)
         
 class Manager :
     def __init__(self, url) :
         self.url = url
         self.get_page()
         self.find_test_case()
+        
+    def get_page(self) :
+        raise NotImplementedError()
+    
+    def find_test_case(self) :
+        raise NotImplementedError()
+    
+    def do_test(self, func) :
+        raise NotImplementedError()
+            
+
+class Programmers(Manager) :
+    def __init__(self, url) :
+        super().__init__(url)
         
     def get_page(self) :
         r = requests.get(self.url)
@@ -41,3 +55,8 @@ class Manager :
             rows = list(map(eval, rows))
             test_result = func(*rows[:-1])
             print(result_text.format(rows[-1], test_result, '성공' if test_result == rows[-1] else '실패'))
+            
+
+class Acmicpc(Manager) :
+    def __init__(self, url) :
+        super().__init__(url)
