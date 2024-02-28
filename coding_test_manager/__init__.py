@@ -1,0 +1,1 @@
+from coding_test_manager.core import Manager
