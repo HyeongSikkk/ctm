@@ -1,6 +1,12 @@
 import requests
 from bs4 import BeautifulSoup as BS
 
+def manager(url) :
+    if 'programmers' in url :
+        print('programmers')
+    elif 'acmicpc' in url :
+        print('백준')
+        
 class Manager :
     def __init__(self, url) :
         self.url = url
