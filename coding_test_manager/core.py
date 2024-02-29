@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as BS
+import subprocess
 
 def manager(url) :
     if 'programmers' in url :
@@ -60,3 +61,39 @@ class Programmers(Manager) :
 class Acmicpc(Manager) :
     def __init__(self, url) :
         super().__init__(url)
+        
+    def get_page(self):
+        header = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"}
+        r = requests.get(self.url, headers = header)
+        self.page = BS(r.text, 'html.parser')
+        
+    def find_test_case(self):
+        test_cases = []
+        cnt = 0
+        while True :
+            cnt += 1
+            target_input = f"sampleinput{cnt}"
+            target_output = f"sampleoutput{cnt}"
+            try :
+                test_case_input = self.page.find(id = target_input).find('pre').text
+                test_case_output = self.page.find(id = target_output).find('pre').text
+                test_case = {
+                    'test_case_input' : test_case_input,
+                    'test_case_output' : test_case_output,
+                          }
+                test_cases.append(test_case)
+            except :
+                break
+        self.test_cases = test_cases
+        
+    def do_test(self, file_path) :
+        '''
+        백준에서 주어지는 샘플 데이터로 테스트 하는 메서드입니다.
+        작성하신 코드를 파이썬 파일로 저장하고, 해당 파일의 경로를 file_path 변수로 전달해주세요.
+        '''
+        cmd = f"python {file_path}"
+        for test_case in self.test_cases :
+            sample_input, sample_output = test_case.values()
+            result = subprocess.run(cmd, input = sample_input, text = True, capture_output=True)
+            print(f"기댓값\n{sample_output.strip()}\n결과괎\n{result.stdout.strip()}\n{'성공' if sample_output.strip() == result.stdout.strip() else '실패'}")
+        
