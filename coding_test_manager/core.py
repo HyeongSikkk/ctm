@@ -24,6 +24,9 @@ class Manager :
     
     def do_test(self, func) :
         raise NotImplementedError()
+    
+    def add_test_case(self, inputs) :
+        pass
             
 
 class Programmers(Manager) :
@@ -47,7 +50,7 @@ class Programmers(Manager) :
             else :
                 test_case = {}
                 for key, value in zip(keys, row.findAll('td')) :
-                    test_case[key] = value.text
+                    test_case[key] = eval(value.text)
                 test_cases.append(test_case)
         self.test_cases = test_cases
     
@@ -55,7 +58,7 @@ class Programmers(Manager) :
         result_text = "기댓값 {}, 결과값 {}, {}"
         for test_case in self.test_cases :
             rows = test_case.values()
-            rows = list(map(eval, rows))
+            # rows = list(map(eval, rows))
             test_result = func(*rows[:-1])
             print(result_text.format(rows[-1], test_result, '성공' if test_result == rows[-1] else '실패'))
             
