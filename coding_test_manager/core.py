@@ -7,6 +7,8 @@ def manager(url) :
         return Programmers(url)
     elif 'acmicpc' in url :
         return Acmicpc(url)
+    else :
+        raise NotSupportSite(f"{url}은(는) 지원하지 않는 사이트입니다.")
         
 class Manager :
     def __init__(self, url) :
@@ -97,3 +99,6 @@ class Acmicpc(Manager) :
             result = subprocess.run(cmd, input = sample_input, text = True, capture_output=True)
             print(f"기댓값\n{sample_output.strip()}\n결과괎\n{result.stdout.strip()}\n{'성공' if sample_output.strip() == result.stdout.strip() else '실패'}")
         
+        
+class NotSupportSite(Exception) :
+    pass
