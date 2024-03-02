@@ -27,7 +27,7 @@ class Manager :
     
     def add_test_case(self, inputs) :
         pass
-            
+    
 
 class Programmers(Manager) :
     def __init__(self, url) :
@@ -52,15 +52,20 @@ class Programmers(Manager) :
                 for key, value in zip(keys, row.findAll('td')) :
                     test_case[key] = eval(value.text)
                 test_cases.append(test_case)
-        self.test_cases = test_cases
+        super().__setattr__('_test_cases', test_cases)
     
     def do_test(self, func) :
         result_text = "기댓값 {}, 결과값 {}, {}"
-        for test_case in self.test_cases :
-            rows = test_case.values()
+        for test_case in self._test_cases :
+            rows = list(test_case.values())
             # rows = list(map(eval, rows))
             test_result = func(*rows[:-1])
             print(result_text.format(rows[-1], test_result, '성공' if test_result == rows[-1] else '실패'))
+    
+    def __setattr__(self, key, value) :
+        if key == '_test_cases' :
+            raise KeyError(f"{key}는 설정할 수 없습니다.")
+        super().__setattr__(key, value)
             
 
 class Acmicpc(Manager) :
@@ -89,7 +94,7 @@ class Acmicpc(Manager) :
                 test_cases.append(test_case)
             except :
                 break
-        self.test_cases = test_cases
+        super().__setattr__('_test_cases', test_cases)
         
     def do_test(self, file_path) :
         '''
@@ -97,10 +102,15 @@ class Acmicpc(Manager) :
         작성하신 코드를 파이썬 파일로 저장하고, 해당 파일의 경로를 file_path 변수로 전달해주세요.
         '''
         cmd = f"python {file_path}"
-        for test_case in self.test_cases :
+        for test_case in self._test_cases :
             sample_input, sample_output = test_case.values()
             result = subprocess.run(cmd, input = sample_input, text = True, capture_output=True)
             print(f"기댓값\n{sample_output.strip()}\n결과괎\n{result.stdout.strip()}\n{'성공' if sample_output.strip() == result.stdout.strip() else '실패'}")
+    
+    def __setattr__(self, key, value) :
+        if key == '_test_cases' :
+            raise KeyError(f"{key}는 설정할 수 없습니다.")
+        super().__setattr__(key, value)
         
         
 class NotSupportSite(Exception) :
