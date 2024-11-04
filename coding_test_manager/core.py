@@ -107,10 +107,10 @@ class Acmicpc(Manager) :
             result = subprocess.run(cmd, input = sample_input, text = True, capture_output=True)
             print(f"기댓값\n{sample_output.strip()}\n결과괎\n{result.stdout.strip()}\n{'성공' if sample_output.strip() == result.stdout.strip() else '실패'}")
     
-    def __setattr__(self, key, value) :
-        if key == '_test_cases' :
-            raise KeyError(f"{key}는 설정할 수 없습니다.")
-        super().__setattr__(key, value)
+    # def __setattr__(self, key, value) :
+    #     if key == '_test_cases' :
+    #         raise KeyError(f"{key}는 설정할 수 없습니다.")
+    #     super().__setattr__(key, value)
         
         
 class NotSupportSite(Exception) :
